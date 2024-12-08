@@ -1,10 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import { AxiosError } from "axios";
+import { toast } from "sonner";
+
+import { login } from "@/services/auth-service";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +26,8 @@ import { FormInput } from "@/components/form/form-input";
 import { LoginValidator, TypeLoginValidator } from "@/lib/validator";
 
 export const LoginForm = () => {
+  const router = useRouter();
+
   const form = useForm<TypeLoginValidator>({
     resolver: zodResolver(LoginValidator),
     values: {
@@ -28,9 +36,18 @@ export const LoginForm = () => {
     },
   });
 
-  const onSubmit = (values: TypeLoginValidator) => {
-    console.log(values);
-  };
+  const { mutate: mutateLogin, isPending: isPendingLogin } = useMutation({
+    mutationFn: (values: TypeLoginValidator) => login(values),
+    onSuccess: () => {
+      toast.success("Login user successfully.");
+      router.push("/");
+    },
+    onError: (err: AxiosError<{ message: string }>) => {
+      toast.error(err?.response?.data?.message || "Login user failed.");
+    },
+  });
+
+  const onSubmit = (values: TypeLoginValidator) => mutateLogin(values);
 
   return (
     <Card className="mx-auto w-[350px] md:w-[400px]">
@@ -43,11 +60,11 @@ export const LoginForm = () => {
       <CardContent>
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <Button variant="outline">
+            <Button variant="outline" disabled={isPendingLogin}>
               <FaGithub className="mr-2 h-4 w-4" />
               Github
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" disabled={isPendingLogin}>
               <FcGoogle className="mr-2 h-4 w-4" />
               Google
             </Button>
@@ -70,6 +87,7 @@ export const LoginForm = () => {
                 label="Email"
                 placeholder="johndoe@mail.com"
                 required
+                disabled={isPendingLogin}
               />
               <FormInput
                 form={form}
@@ -78,6 +96,7 @@ export const LoginForm = () => {
                 type="password"
                 placeholder="********"
                 required
+                disabled={isPendingLogin}
               />
               <div className="text-sm text-end">
                 <Link
@@ -96,8 +115,9 @@ export const LoginForm = () => {
           <Button
             className="w-full"
             onClick={() => form.handleSubmit(onSubmit)()}
+            disabled={isPendingLogin}
           >
-            Login
+            {isPendingLogin ? "Loading..." : "Login"}
           </Button>
           <div className="text-center text-sm">
             Don&apos;t have an account?{" "}
