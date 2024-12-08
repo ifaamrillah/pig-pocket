@@ -24,3 +24,25 @@ export const RegisterValidator = z.object({
 });
 
 export type TypeRegisterValidator = z.infer<typeof RegisterValidator>;
+
+export const LoginValidator = z.object({
+  email: z
+    .string({
+      message: "Email is required",
+    })
+    .email({
+      message: "Invalid email",
+    }),
+  password: z
+    .string({
+      message: "Password is required",
+    })
+    .min(8, {
+      message: "Password must be at least 8 characters",
+    })
+    .max(32, {
+      message: "Password must be less than 32 characters",
+    }),
+});
+
+export type TypeLoginValidator = z.infer<typeof LoginValidator>;
