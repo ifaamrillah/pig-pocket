@@ -3,8 +3,13 @@
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
+
+import { register } from "@/services/auth-service";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -29,9 +34,17 @@ export const RegisterForm = () => {
     },
   });
 
-  const onSubmit = (data: TypeRegisterValidator) => {
-    console.log(data);
-  };
+  const { mutate: mutateRegister, isPending: isPendingRegister } = useMutation({
+    mutationFn: (values: TypeRegisterValidator) => register(values),
+    onSuccess: () => {
+      toast.success("Register user successfully.");
+    },
+    onError: (err: AxiosError<{ message: string }>) => {
+      toast.error(err?.response?.data?.message || "Register user failed.");
+    },
+  });
+
+  const onSubmit = (values: TypeRegisterValidator) => mutateRegister(values);
 
   return (
     <Card className="mx-auto w-[350px] md:w-[400px]">
@@ -48,7 +61,7 @@ export const RegisterForm = () => {
               <FaGithub className="mr-2 h-4 w-4" />
               Github
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" disabled={isPendingRegister}>
               <FcGoogle className="mr-2 h-4 w-4" />
               Google
             </Button>
@@ -71,6 +84,7 @@ export const RegisterForm = () => {
                 label="Name"
                 placeholder="John Doe"
                 required
+                disabled={isPendingRegister}
               />
               <FormInput
                 form={form}
@@ -78,6 +92,7 @@ export const RegisterForm = () => {
                 label="Email"
                 placeholder="johndoe@mail.com"
                 required
+                disabled={isPendingRegister}
               />
               <FormInput
                 form={form}
@@ -86,6 +101,7 @@ export const RegisterForm = () => {
                 type="password"
                 placeholder="********"
                 required
+                disabled={isPendingRegister}
               />
               <div className="text-xs text-muted-foreground">
                 Clicking the register button means you agree to our Terms of
@@ -100,8 +116,9 @@ export const RegisterForm = () => {
           <Button
             className="w-full"
             onClick={() => form.handleSubmit(onSubmit)()}
+            disabled={isPendingRegister}
           >
-            Register
+            {isPendingRegister ? "Loading..." : "Register"}
           </Button>
           <div className="text-center text-sm">
             Already have an account?{" "}
