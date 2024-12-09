@@ -1,12 +1,13 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import type { Adapter } from "next-auth/adapters";
 import { NextResponse } from "next/server";
 
 import { prisma } from "@/lib/prisma";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(prisma) as Adapter,
   session: {
     strategy: "jwt",
   },
@@ -32,7 +33,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
+    async authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const currentPath = nextUrl.pathname;
 
@@ -55,6 +56,30 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
 
       return true;
+    },
+    async jwt({ token, user }) {
+      if (!token.sub) return token;
+
+      if (user) {
+        token.role = user.role;
+        token.plan = user.plan;
+        token.expiredPlan = user.expiredPlan;
+      }
+
+      return token;
+    },
+    async session({ token, session }) {
+      if (token.sub && session.user) {
+        session.user.id = token.sub;
+      }
+
+      if (token.role && session.user) {
+        session.user.role = token.role;
+        session.user.plan = token.plan;
+        session.user.expiredPlan = token.expiredPlan;
+      }
+
+      return session;
     },
   },
 });
