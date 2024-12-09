@@ -61,7 +61,11 @@ export const LoginForm = () => {
       <CardContent>
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <Button variant="outline" disabled={isPendingLogin}>
+            <Button
+              variant="outline"
+              disabled={isPendingLogin}
+              onClick={() => signIn("github", { redirectTo: "/" })}
+            >
               <FaGithub className="mr-2 h-4 w-4" />
               Github
             </Button>
