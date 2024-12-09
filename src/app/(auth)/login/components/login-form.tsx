@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -64,7 +65,11 @@ export const LoginForm = () => {
               <FaGithub className="mr-2 h-4 w-4" />
               Github
             </Button>
-            <Button variant="outline" disabled={isPendingLogin}>
+            <Button
+              variant="outline"
+              disabled={isPendingLogin}
+              onClick={() => signIn("google", { redirectTo: "/" })}
+            >
               <FcGoogle className="mr-2 h-4 w-4" />
               Google
             </Button>

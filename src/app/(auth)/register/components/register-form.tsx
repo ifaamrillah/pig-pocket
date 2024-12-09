@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -25,6 +27,8 @@ import { FormInput } from "@/components/form/form-input";
 import { RegisterValidator, TypeRegisterValidator } from "@/lib/validator";
 
 export const RegisterForm = () => {
+  const router = useRouter();
+
   const form = useForm<TypeRegisterValidator>({
     resolver: zodResolver(RegisterValidator),
     values: {
@@ -38,6 +42,7 @@ export const RegisterForm = () => {
     mutationFn: (values: TypeRegisterValidator) => register(values),
     onSuccess: () => {
       toast.success("Register user successfully.");
+      router.push("/login");
     },
     onError: (err: AxiosError<{ message: string }>) => {
       toast.error(err?.response?.data?.message || "Register user failed.");
@@ -61,7 +66,11 @@ export const RegisterForm = () => {
               <FaGithub className="mr-2 h-4 w-4" />
               Github
             </Button>
-            <Button variant="outline" disabled={isPendingRegister}>
+            <Button
+              variant="outline"
+              disabled={isPendingRegister}
+              onClick={() => signIn("google", { redirectTo: "/" })}
+            >
               <FcGoogle className="mr-2 h-4 w-4" />
               Google
             </Button>
