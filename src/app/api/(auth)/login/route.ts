@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { compareSync } from "bcrypt-ts";
 
 import { prisma } from "@/lib/prisma";
+import { signIn } from "@/lib/auth";
 import { validateFields } from "@/lib/utils";
 import { LoginValidator } from "@/lib/validator";
-import { signIn } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   // Body

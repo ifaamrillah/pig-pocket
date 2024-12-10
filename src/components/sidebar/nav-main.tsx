@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { LuLayoutDashboard, LuWallet } from "react-icons/lu";
 
+import { cn } from "@/lib/utils";
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -28,7 +30,6 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
 
 const navList = [
   {

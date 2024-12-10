@@ -1,10 +1,10 @@
 import { ReactNode } from "react";
 
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/sidebar/app-sidebar";
-
 import { auth } from "@/lib/auth";
 import { generateFallbackName } from "@/lib/utils";
+
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/sidebar/app-sidebar";
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const session = await auth();

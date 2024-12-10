@@ -2,6 +2,8 @@
 
 import { Fragment, ReactNode } from "react";
 
+import { cn } from "@/lib/utils";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,7 +14,6 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
 
 interface PageWrapperProps {
   children: ReactNode;

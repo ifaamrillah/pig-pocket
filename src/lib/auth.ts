@@ -7,7 +7,7 @@ import Google from "next-auth/providers/google";
 import Github from "next-auth/providers/github";
 
 import { prisma } from "@/lib/prisma";
-import { FREE_PLAN_DURATION } from "./constants";
+import { FREE_PLAN_DURATION } from "@/lib/constants";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma) as Adapter,

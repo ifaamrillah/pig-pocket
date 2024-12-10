@@ -1,5 +1,7 @@
 import { FieldValues } from "react-hook-form";
 
+import { FormProps } from "@/lib/types";
+
 import {
   FormControl,
   FormDescription,
@@ -9,7 +11,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { FormProps } from "@/lib/types";
 
 export const FormInput = <T extends FieldValues>({
   form,

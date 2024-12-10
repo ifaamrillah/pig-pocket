@@ -11,6 +11,8 @@ import { FcGoogle } from "react-icons/fc";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 
+import { RegisterValidator, TypeRegisterValidator } from "@/lib/validator";
+
 import { register } from "@/services/auth-service";
 
 import { Button } from "@/components/ui/button";
@@ -24,7 +26,6 @@ import {
 } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { FormInput } from "@/components/form/form-input";
-import { RegisterValidator, TypeRegisterValidator } from "@/lib/validator";
 
 export const RegisterForm = () => {
   const router = useRouter();

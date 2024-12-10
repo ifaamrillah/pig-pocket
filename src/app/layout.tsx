@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 
 import { ReactQueryProvider } from "@/providers/react-query-provider";
+
 import { Toaster } from "@/components/ui/sonner";
 
 import "./globals.css";

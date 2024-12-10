@@ -11,6 +11,8 @@ import { FaGithub } from "react-icons/fa";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 
+import { LoginValidator, TypeLoginValidator } from "@/lib/validator";
+
 import { login } from "@/services/auth-service";
 
 import { Button } from "@/components/ui/button";
@@ -24,7 +26,6 @@ import {
 } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { FormInput } from "@/components/form/form-input";
-import { LoginValidator, TypeLoginValidator } from "@/lib/validator";
 
 export const LoginForm = () => {
   const router = useRouter();
