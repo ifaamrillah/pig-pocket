@@ -201,6 +201,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return NextResponse.redirect(new URL("/", nextUrl));
       }
 
+      // Check expired plan
+      if (!currentPath.startsWith("/plan")) {
+        const expiredPlan = auth?.user?.expiredPlan
+          ? new Date(auth?.user?.expiredPlan)
+          : null;
+        const now = new Date();
+        const isExpiredPlan = expiredPlan && !(now < expiredPlan);
+        if (isExpiredPlan)
+          return NextResponse.redirect(new URL("/plan", nextUrl));
+      }
+
       return true;
     },
     async jwt({ token, user }) {
