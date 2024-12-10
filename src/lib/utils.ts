@@ -26,3 +26,15 @@ export async function validateFields<T>(
 
   return validated.data;
 }
+
+export function generateFallbackName(name: string) {
+  if (!name || name.trim() === "") return "US";
+
+  const words = name.trim().split(/\s+/);
+
+  if (words.length > 1) {
+    return words[0][0].toUpperCase() + words[1][0].toUpperCase();
+  } else {
+    return name.slice(0, 2).toUpperCase();
+  }
+}
