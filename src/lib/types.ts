@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
 export type FormProps<T extends FieldValues> = {
@@ -8,5 +9,4 @@ export type FormProps<T extends FieldValues> = {
   placeholder?: string;
   disabled?: boolean;
   description?: string;
-  className?: string;
 };
