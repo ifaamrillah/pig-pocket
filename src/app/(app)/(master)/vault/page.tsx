@@ -2,6 +2,8 @@ import { Metadata } from "next";
 
 import { PageWrapper } from "@/components/page-wrapper";
 
+import { VaultTable } from "./components/vault-table";
+
 const breadcrumb = [
   {
     label: "Dashboard",
@@ -22,5 +24,9 @@ export const metadata: Metadata = {
 };
 
 export default function VaultPage() {
-  return <PageWrapper breadcrumb={breadcrumb}>Vault Page</PageWrapper>;
+  return (
+    <PageWrapper breadcrumb={breadcrumb}>
+      <VaultTable />
+    </PageWrapper>
+  );
 }
