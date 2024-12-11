@@ -68,8 +68,8 @@ const navList = [
         collapse: true,
         subMenu: [
           {
-            title: "Account",
-            url: "/account",
+            title: "Vault",
+            url: "/vault",
             icon: CreditCard,
           },
           {
