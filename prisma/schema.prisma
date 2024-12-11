@@ -65,6 +65,8 @@ model User {
   
   accounts      Account[]
   sessions      Session[]
+
+  vault        Vault[]
  
   @@map("users")
 }
@@ -78,3 +80,23 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 // --- End Next Auth ---
+
+enum VaultType {
+  TRANSACTION
+}
+
+model Vault {
+  id String @id @default(cuid())
+  name String
+  startingBalance Decimal
+  status Boolean @default(true)
+  type VaultType @default(TRANSACTION)
+
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, name])
+}
