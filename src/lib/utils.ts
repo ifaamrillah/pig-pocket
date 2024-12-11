@@ -45,6 +45,37 @@ export async function checkSession() {
   return session?.user;
 }
 
+export function parseQueryParams(searchParams: URLSearchParams) {
+  const pageIndex = parseInt(searchParams.get("pagination[pageIndex]") || "1");
+  const pageSize = parseInt(searchParams.get("pagination[pageSize]") || "10");
+
+  const sortBy = searchParams.get("sorting[sortBy]") || undefined;
+  const sortDesc = searchParams.get("sorting[sortDesc]") === "true";
+  const orderBy = sortBy ? { [sortBy]: sortDesc ? "desc" : "asc" } : undefined;
+
+  const filters: Record<string, unknown> = {};
+
+  for (const [key, value] of searchParams.entries()) {
+    if (key.startsWith("filters[")) {
+      const filterKey = key.slice(8, -1);
+      filters[filterKey] = value;
+    }
+  }
+
+  return {
+    pagination: {
+      pageIndex,
+      pageSize,
+    },
+    sorting: {
+      sortBy,
+      sortDesc,
+      orderBy,
+    },
+    filters,
+  };
+}
+
 export function generateFallbackName(name: string) {
   if (!name || name.trim() === "") return "US";
 
