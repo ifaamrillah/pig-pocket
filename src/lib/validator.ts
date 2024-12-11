@@ -1,3 +1,4 @@
+import { VaultType } from "@prisma/client";
 import { z } from "zod";
 
 export const RegisterValidator = z.object({
@@ -46,3 +47,16 @@ export const LoginValidator = z.object({
 });
 
 export type TypeLoginValidator = z.infer<typeof LoginValidator>;
+
+export const VaultValidator = z.object({
+  name: z.string().min(1, {
+    message: "Name is required",
+  }),
+  startingBalance: z
+    .number({ message: "Starting Balance must be a number" })
+    .min(0, { message: "Starting Balance must not be minus" }),
+  status: z.boolean(),
+  type: z.nativeEnum(VaultType).default(VaultType.TRANSACTION),
+});
+
+export type TypeVaultValidator = z.infer<typeof VaultValidator>;
