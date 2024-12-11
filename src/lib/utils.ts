@@ -3,14 +3,13 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { ZodType } from "zod";
 
+import { auth } from "@/lib/auth";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export async function validateFields<T>(
-  req: NextRequest,
-  validator: ZodType<T>
-) {
+export async function checkFields<T>(req: NextRequest, validator: ZodType<T>) {
   const body = await req.json();
 
   const validated = validator.safeParse(body);
@@ -27,6 +26,25 @@ export async function validateFields<T>(
   return validated.data;
 }
 
+export async function checkSession() {
+  const session = await auth();
+  if (!session?.expires || !session?.user) {
+    return NextResponse.json(
+      { message: "Unauthorized access." },
+      { status: 401 }
+    );
+  }
+
+  if (isExpired(session?.expires)) {
+    return NextResponse.json(
+      { message: "Session expired. Please log in again." },
+      { status: 401 }
+    );
+  }
+
+  return session?.user;
+}
+
 export function generateFallbackName(name: string) {
   if (!name || name.trim() === "") return "US";
 
@@ -37,4 +55,9 @@ export function generateFallbackName(name: string) {
   } else {
     return name.slice(0, 2).toUpperCase();
   }
+}
+
+export function isExpired(expiration: string) {
+  const expirationDate = new Date(expiration);
+  return Date.now() > expirationDate.getTime();
 }
