@@ -1,6 +1,10 @@
 "use client";
+
 import { useState } from "react";
-import { Settings, SquarePen } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Settings, SquarePen, Trash2 } from "lucide-react";
+import { AxiosError } from "axios";
+import { toast } from "sonner";
 
 import {
   ActionColumn,
@@ -16,9 +20,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { ConfirmModal } from "@/components/ui/confirm-modal";
 
 import { VaultModal } from "./vault-modal";
+import { deleteVaultById } from "@/services/vault-service";
 
 export const vaultColumn = [
   NoColumn({
@@ -58,7 +64,23 @@ export const vaultColumn = [
 ];
 
 const ActionButton = ({ id }: { id: string }) => {
+  const queryClient = useQueryClient();
   const [isModalEditOpen, setModalEditOpen] = useState<boolean>(false);
+  const [isModalDeleteOpen, setModalDeleteOpen] = useState<boolean>(false);
+
+  const { mutate: mutateDeleteVault, isPending: isPendingVault } = useMutation({
+    mutationFn: (id: string) => deleteVaultById(id),
+    onSuccess: () => {
+      toast.success("Delete vault successfully.");
+    },
+    onError: (err: AxiosError<{ message: string }>) => {
+      toast.error(err?.response?.data?.message || "Delete vault failed.");
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["getAllVault"] });
+      setModalDeleteOpen(false);
+    },
+  });
 
   return (
     <>
@@ -76,6 +98,12 @@ const ActionButton = ({ id }: { id: string }) => {
           >
             <SquarePen className="size-4" /> Edit
           </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => setModalDeleteOpen(true)}
+            className="text-red-500 cursor-pointer"
+          >
+            <Trash2 className="size-4" /> Delete
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -84,6 +112,19 @@ const ActionButton = ({ id }: { id: string }) => {
           id={id}
           isOpen={isModalEditOpen}
           setOpen={setModalEditOpen}
+        />
+      )}
+
+      {isModalDeleteOpen && (
+        <ConfirmModal
+          isOpen={isModalDeleteOpen}
+          setOpen={setModalDeleteOpen}
+          isLoading={isPendingVault}
+          title="Are you sure you want to delete it?"
+          description="This action cannot be undone. This will permanently delete your vault and remove your data from our servers."
+          confirmBtnLabel="Delete"
+          confirmBtnClassName={buttonVariants({ variant: "destructive" })}
+          onConfirm={() => mutateDeleteVault(id)}
         />
       )}
     </>
