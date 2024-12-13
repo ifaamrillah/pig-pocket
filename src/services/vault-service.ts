@@ -8,6 +8,12 @@ export async function getAllVault(params?: Record<string, unknown>) {
   });
 }
 
+export async function getVaultById(id?: string) {
+  return await apiGet({
+    url: `/vault/${id}`,
+  });
+}
+
 export async function createVault(data: TypeVaultValidator) {
   return await apiPost({
     url: "/vault",
