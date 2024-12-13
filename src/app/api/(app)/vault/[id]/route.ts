@@ -106,3 +106,55 @@ export async function PATCH(
   // Internal server error
   return NextResponse.json({ message: "Edit vault failed." }, { status: 500 });
 }
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  // Check session
+  const user = await checkSession();
+  if (user instanceof NextResponse) return user;
+
+  // Params
+  const id = (await params).id;
+
+  // Check id is valid
+  const getVaultById = await prisma.vault.findUnique({
+    where: { id },
+    select: {
+      id: true,
+    },
+  });
+  if (!getVaultById) {
+    return NextResponse.json(
+      {
+        message: `Vault with id: "${id}" was not found.`,
+      },
+      { status: 404 }
+    );
+  }
+
+  // Delate vault by id
+  const deleteVaultById = await prisma.vault.delete({
+    where: {
+      id,
+    },
+  });
+  if (deleteVaultById) {
+    return NextResponse.json(
+      {
+        message: "Delete vault successfully.",
+        data: deleteVaultById,
+      },
+      { status: 200 }
+    );
+  }
+
+  // Internal server error
+  return NextResponse.json(
+    {
+      message: "Edit vault failed.",
+    },
+    { status: 500 }
+  );
+}
