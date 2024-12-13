@@ -1,4 +1,4 @@
-import { apiGet, apiPatch, apiPost } from "@/lib/axiosClient";
+import { apiDelete, apiGet, apiPatch, apiPost } from "@/lib/axiosClient";
 import { TypeVaultValidator } from "@/lib/validator";
 
 export async function getAllVault(params?: Record<string, unknown>) {
@@ -25,5 +25,11 @@ export async function updateVaultById(id: string, data: TypeVaultValidator) {
   return await apiPatch({
     url: `/vault/${id}`,
     data,
+  });
+}
+
+export async function deleteVaultById(id: string) {
+  return await apiDelete({
+    url: `/vault/${id}`,
   });
 }
