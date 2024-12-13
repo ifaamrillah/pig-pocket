@@ -17,10 +17,10 @@ export const useMediaQuery = () => {
         height: window.innerHeight,
       });
 
-      if (window.matchMedia("(max-width: 640px)").matches) {
+      if (window.matchMedia("(max-width: 767px)").matches) {
         setDevice("mobile");
       } else if (
-        window.matchMedia("(min-width: 641px) and (max-width: 1000px)").matches
+        window.matchMedia("(min-width: 768px) and (max-width: 1000px)").matches
       ) {
         setDevice("tablet");
       } else {
