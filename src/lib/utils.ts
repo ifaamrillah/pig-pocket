@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -53,7 +54,7 @@ export function parseQueryParams(searchParams: URLSearchParams) {
   const sortDesc = searchParams.get("sorting[sortDesc]") === "true";
   const orderBy = sortBy ? { [sortBy]: sortDesc ? "desc" : "asc" } : undefined;
 
-  const filters: Record<string, unknown> = {};
+  const filters: Record<string, any> = {};
 
   for (const [key, value] of searchParams.entries()) {
     if (key.startsWith("filters[")) {

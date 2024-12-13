@@ -68,7 +68,7 @@ export function PageWrapper({
           "p-4",
           open && !isMobile
             ? "w-[calc(100vw-var(--sidebar-width))]"
-            : "w-screen",
+            : "w-screen ",
           className
         )}
       >

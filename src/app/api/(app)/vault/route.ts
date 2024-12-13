@@ -13,11 +13,14 @@ export async function GET(req: NextRequest) {
   const { pagination, sorting, filters } = parseQueryParams(
     req.nextUrl.searchParams
   );
+  const filterName = filters?.name || undefined;
 
   // Filter
   const where = {
     userId: user.id,
-    name: filters?.name || undefined,
+    ...(filterName && {
+      name: { contains: filterName, mode: "insensitive" },
+    }),
   };
 
   // Get all vault
