@@ -3,13 +3,17 @@
 import { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 
 import { TypeVaultValidator, VaultValidator } from "@/lib/validator";
 
-import { createVault } from "@/services/vault-service";
+import {
+  createVault,
+  getVaultById,
+  updateVaultById,
+} from "@/services/vault-service";
 
 import {
   Credenza,
@@ -27,21 +31,18 @@ import { FormCurrency } from "@/components/form/form-currency";
 import { FormSwitch } from "@/components/form/form-switch";
 
 interface VaultModalProps {
+  id?: string;
   isOpen: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export const VaultModal = ({ isOpen, setOpen }: VaultModalProps) => {
+export const VaultModal = ({ id, isOpen, setOpen }: VaultModalProps) => {
   const queryClient = useQueryClient();
 
-  const form = useForm<TypeVaultValidator>({
-    resolver: zodResolver(VaultValidator),
-    values: {
-      name: "",
-      startingBalance: 0,
-      status: true,
-      type: "TRANSACTION",
-    },
+  const { data, isSuccess } = useQuery({
+    queryKey: ["getVaultById", id],
+    queryFn: () => getVaultById(id),
+    enabled: !!id,
   });
 
   const { mutate: mutateCreateVault, isPending: isPendingCreateVault } =
@@ -59,13 +60,47 @@ export const VaultModal = ({ isOpen, setOpen }: VaultModalProps) => {
       },
     });
 
-  const onSubmit = (values: TypeVaultValidator) => mutateCreateVault(values);
+  const { mutate: mutateUpdateVault, isPending: isPendingUpdateVault } =
+    useMutation({
+      mutationFn: (values: TypeVaultValidator) =>
+        updateVaultById(id as string, values),
+      onSuccess: () => {
+        toast.success("Edit vault successfully.");
+      },
+      onError: (err: AxiosError<{ message: string }>) => {
+        toast.error(err?.response?.data?.message || "Edit vault failed.");
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries({ queryKey: ["getAllVault"] });
+        setOpen(false);
+      },
+    });
+
+  const form = useForm<TypeVaultValidator>({
+    resolver: zodResolver(VaultValidator),
+    values: {
+      name: data?.data?.name || "",
+      startingBalance: +data?.data?.startingBalance || 0,
+      status: data?.data?.status ?? true,
+      type: "TRANSACTION",
+    },
+  });
+
+  const onSubmit = (values: TypeVaultValidator) => {
+    if (id) {
+      mutateUpdateVault(values);
+    } else {
+      mutateCreateVault(values);
+    }
+  };
+
+  if (id && !isSuccess) return null;
 
   return (
     <Credenza open={isOpen} onOpenChange={setOpen}>
       <CredenzaContent>
         <CredenzaHeader>
-          <CredenzaTitle>Add New Vault</CredenzaTitle>
+          <CredenzaTitle>{id ? "Edit" : "Add New"} Vault</CredenzaTitle>
         </CredenzaHeader>
         <CredenzaBody>
           <Form {...form}>
@@ -79,14 +114,14 @@ export const VaultModal = ({ isOpen, setOpen }: VaultModalProps) => {
                 label="Name"
                 placeholder="Vault name"
                 required
-                disabled={isPendingCreateVault}
+                disabled={isPendingCreateVault || isPendingUpdateVault}
               />
               <FormCurrency
                 form={form}
                 name="startingBalance"
                 label="Starting Balance"
                 required
-                disabled={isPendingCreateVault}
+                disabled={isPendingCreateVault || isPendingUpdateVault}
               />
               <FormSwitch
                 form={form}
@@ -94,22 +129,27 @@ export const VaultModal = ({ isOpen, setOpen }: VaultModalProps) => {
                 label="Status"
                 required
                 placeholder="You can make vault active or inactive."
-                disabled={isPendingCreateVault}
+                disabled={isPendingCreateVault || isPendingUpdateVault}
               />
             </form>
           </Form>
         </CredenzaBody>
         <CredenzaFooter>
           <CredenzaClose asChild>
-            <Button variant="outline" disabled={isPendingCreateVault}>
+            <Button
+              variant="outline"
+              disabled={isPendingCreateVault || isPendingUpdateVault}
+            >
               Cancel
             </Button>
           </CredenzaClose>
           <Button
             onClick={form.handleSubmit(onSubmit)}
-            disabled={isPendingCreateVault}
+            disabled={isPendingCreateVault || isPendingUpdateVault}
           >
-            {isPendingCreateVault ? "Saving..." : "Save"}
+            {isPendingCreateVault || isPendingUpdateVault
+              ? "Saving..."
+              : "Save"}
           </Button>
         </CredenzaFooter>
       </CredenzaContent>
