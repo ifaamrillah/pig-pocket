@@ -82,3 +82,17 @@ export const DefaultColumn = ({
     ...props,
   };
 };
+
+export const ActionColumn = ({
+  accessorKey,
+  className,
+  ...props
+}: ColumnProps): ColumnDef<any> => {
+  const defaultClassName = cn("w-[60px]", className);
+
+  return {
+    accessorKey,
+    meta: { className: defaultClassName },
+    ...props,
+  };
+};
