@@ -12,7 +12,6 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet";
 import { Form } from "@/components/ui/form";
 import { FormInput } from "@/components/form/form-input";
@@ -59,9 +58,6 @@ export const VaultFilter = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        <Button variant="outline">Open</Button>
-      </SheetTrigger>
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Filter</SheetTitle>
