@@ -1,4 +1,4 @@
-import { VaultType } from "@prisma/client";
+import { CategoryType, VaultType } from "@prisma/client";
 import { z } from "zod";
 
 export const RegisterValidator = z.object({
@@ -60,3 +60,15 @@ export const VaultValidator = z.object({
 });
 
 export type TypeVaultValidator = z.infer<typeof VaultValidator>;
+
+export const CategoryValidator = z.object({
+  name: z.string().min(1, {
+    message: "Name is required",
+  }),
+  type: z.object({
+    value: z.nativeEnum(CategoryType).default(CategoryType.EXPENSE),
+    label: z.string({ message: "Category is required" }),
+  }),
+});
+
+export type TypeCategoryValidator = z.infer<typeof CategoryValidator>;
