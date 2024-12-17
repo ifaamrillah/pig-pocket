@@ -67,6 +67,7 @@ model User {
   sessions      Session[]
 
   vault        Vault[]
+  categories   Category[]
  
   @@map("users")
 }
@@ -81,6 +82,8 @@ model VerificationToken {
 }
 // --- End Next Auth ---
 
+
+// --- Start Master ---
 enum VaultType {
   TRANSACTION
 }
@@ -100,3 +103,23 @@ model Vault {
 
   @@unique([userId, name])
 }
+
+enum CategoryType {
+  INCOME
+  EXPENSE
+}
+
+model Category {
+  id String @id @default(cuid())
+  name String
+  type CategoryType @default(INCOME)
+
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, name])
+}
+// --- End Master ---
