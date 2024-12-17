@@ -2,6 +2,8 @@ import { Metadata } from "next";
 
 import { PageWrapper } from "@/components/page-wrapper";
 
+import { CategoryTable } from "./components/category-table";
+
 const breadcrumb = [
   {
     label: "Dashboard",
@@ -22,5 +24,9 @@ export const metadata: Metadata = {
 };
 
 export default function CategoryPage() {
-  return <PageWrapper breadcrumb={breadcrumb}>Category Page</PageWrapper>;
+  return (
+    <PageWrapper breadcrumb={breadcrumb}>
+      <CategoryTable />
+    </PageWrapper>
+  );
 }
