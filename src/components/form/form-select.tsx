@@ -38,16 +38,24 @@ export const FormSelect = <T extends FieldValues>({
       render={({ field }) => (
         <FormItem>
           {label && <FormLabel required={required}>{label}</FormLabel>}
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
+          <Select
+            onValueChange={(value) => {
+              const selectedOption = options.find(
+                (option) => option.value === value
+              );
+              field.onChange(selectedOption);
+            }}
+            defaultValue={field?.value?.value}
+          >
             <FormControl>
               <SelectTrigger disabled={disabled}>
                 <SelectValue placeholder={placeholder} />
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {options?.map(({ value, label }) => (
-                <SelectItem key={value} value={value}>
-                  {label}
+              {options?.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
                 </SelectItem>
               ))}
             </SelectContent>
