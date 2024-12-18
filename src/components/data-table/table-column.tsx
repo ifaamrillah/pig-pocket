@@ -2,7 +2,8 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import { cn } from "@/lib/utils";
-import { Badge } from "../ui/badge";
+
+import { Badge } from "@/components/ui/badge";
 
 interface ColumnProps extends Omit<ColumnDef<any>, "cell" | "meta"> {
   accessorKey: string;
@@ -91,7 +92,9 @@ export const BadgeColumn = ({
 
       return (
         <div className={defaultClassName}>
-          <Badge className={`rounded-full shadow-none bg-${findBadge?.color}`}>
+          <Badge
+            className={`rounded-full shadow-none bg-${findBadge?.color} hover:bg-${findBadge?.color}`}
+          >
             {findBadge?.label}
           </Badge>
         </div>
