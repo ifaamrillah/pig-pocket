@@ -2,13 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { hashSync } from "bcrypt-ts";
 
 import { prisma } from "@/lib/prisma";
-import { validateFields } from "@/lib/utils";
+import { checkFields } from "@/lib/utils";
 import { RegisterValidator } from "@/lib/validator";
 import { FREE_PLAN_DURATION } from "@/lib/constants";
 
 export async function POST(req: NextRequest) {
   // Body
-  const body = await validateFields(req, RegisterValidator);
+  const body = await checkFields(req, RegisterValidator);
   if (body instanceof NextResponse) return body;
 
   // Check email is unique

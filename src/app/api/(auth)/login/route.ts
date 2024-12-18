@@ -3,12 +3,12 @@ import { compareSync } from "bcrypt-ts";
 
 import { prisma } from "@/lib/prisma";
 import { signIn } from "@/lib/auth";
-import { validateFields } from "@/lib/utils";
+import { checkFields } from "@/lib/utils";
 import { LoginValidator } from "@/lib/validator";
 
 export async function POST(req: NextRequest) {
   // Body
-  const body = await validateFields(req, LoginValidator);
+  const body = await checkFields(req, LoginValidator);
   if (body instanceof NextResponse) return body;
 
   // Check existing user
