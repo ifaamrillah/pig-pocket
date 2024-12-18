@@ -2,6 +2,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import { cn } from "@/lib/utils";
+import { Badge } from "../ui/badge";
 
 interface ColumnProps extends Omit<ColumnDef<any>, "cell" | "meta"> {
   accessorKey: string;
@@ -63,6 +64,38 @@ export const CurrencyColumn = ({
       }).format(startingBalance);
 
       return <div className={defaultClassName}>{formatted}</div>;
+    },
+    meta: { className: defaultClassName },
+    ...props,
+  };
+};
+
+export const BadgeColumn = ({
+  accessorKey,
+  rowValue,
+  className,
+  options,
+  ...props
+}: ColumnProps & {
+  options: { label: any; value: any; color: string }[];
+}): ColumnDef<any> => {
+  const defaultClassName = cn("w-[100px]", className);
+  const value = rowValue || accessorKey;
+
+  return {
+    accessorKey,
+    cell: ({ row }) => {
+      const findBadge = options.find(
+        (option) => option.value === row.getValue(value)
+      );
+
+      return (
+        <div className={defaultClassName}>
+          <Badge className={`rounded-full shadow-none bg-${findBadge?.color}`}>
+            {findBadge?.label}
+          </Badge>
+        </div>
+      );
     },
     meta: { className: defaultClassName },
     ...props,
