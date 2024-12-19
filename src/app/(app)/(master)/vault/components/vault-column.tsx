@@ -52,23 +52,24 @@ const ActionButton = ({ id }: { id: string }) => {
   const [isModalEditOpen, setModalEditOpen] = useState<boolean>(false);
   const [isModalDeleteOpen, setModalDeleteOpen] = useState<boolean>(false);
 
-  const { mutate: mutateDeleteVault, isPending: isPendingVault } = useMutation({
-    mutationFn: (id: string) => deleteVaultById(id),
-    onSuccess: () => {
-      toast.success("Delete vault successfully.");
-    },
-    onError: (err: AxiosError<{ message: string }>) => {
-      toast.error(err?.response?.data?.message || "Delete vault failed.");
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["getAllVault"] });
-      setModalDeleteOpen(false);
-    },
-  });
+  const { mutate: mutateDeleteVault, isPending: isPendingDeleteVault } =
+    useMutation({
+      mutationFn: (id: string) => deleteVaultById(id),
+      onSuccess: () => {
+        toast.success("Delete vault successfully.");
+      },
+      onError: (err: AxiosError<{ message: string }>) => {
+        toast.error(err?.response?.data?.message || "Delete vault failed.");
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries({ queryKey: ["getAllVault"] });
+        setModalDeleteOpen(false);
+      },
+    });
 
   return (
     <>
-      <DropdownMenu>
+      <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="size-8 p-0">
             <span className="sr-only">Open menu</span>
@@ -103,7 +104,7 @@ const ActionButton = ({ id }: { id: string }) => {
         <ConfirmModal
           isOpen={isModalDeleteOpen}
           setOpen={setModalDeleteOpen}
-          isLoading={isPendingVault}
+          isLoading={isPendingDeleteVault}
           title="Are you sure you want to delete it?"
           description="This action cannot be undone. This will permanently delete your vault and remove your data from our servers."
           confirmBtnLabel="Delete"
