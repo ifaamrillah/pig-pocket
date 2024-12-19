@@ -1,4 +1,4 @@
-import { apiGet, apiPost } from "@/lib/axiosClient";
+import { apiGet, apiPatch, apiPost } from "@/lib/axiosClient";
 import { TypeCategoryValidator } from "@/lib/validator";
 
 export async function getAllCategory(params?: Record<string, unknown>) {
@@ -17,6 +17,16 @@ export async function getCategoryById(id?: string) {
 export async function createCategory(data: TypeCategoryValidator) {
   return await apiPost({
     url: "/category",
+    data,
+  });
+}
+
+export async function updateCateoryById(
+  id: string,
+  data: TypeCategoryValidator
+) {
+  return await apiPatch({
+    url: `/category/${id}`,
     data,
   });
 }
