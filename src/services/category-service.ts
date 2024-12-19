@@ -8,6 +8,12 @@ export async function getAllCategory(params?: Record<string, unknown>) {
   });
 }
 
+export async function getCategoryById(id?: string) {
+  return await apiGet({
+    url: `/category/${id}`,
+  });
+}
+
 export async function createCategory(data: TypeCategoryValidator) {
   return await apiPost({
     url: "/category",
