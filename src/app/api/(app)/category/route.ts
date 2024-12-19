@@ -14,6 +14,7 @@ export async function GET(req: NextRequest) {
     req.nextUrl.searchParams
   );
   const filterName = filters?.name || undefined;
+  const filterType = filters?.type || undefined;
 
   // Filter
   const where = {
@@ -21,6 +22,7 @@ export async function GET(req: NextRequest) {
     ...(filterName && {
       name: { contains: filterName, mode: "insensitive" },
     }),
+    ...(filterType && { type: filterType }),
   };
 
   // Get all category
@@ -74,19 +76,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const transformFields = () => {
-    const { type, ...newData } = body;
-
-    return {
-      ...newData,
-      type: type.value,
-      userId: user.id as string,
-    };
-  };
-
   // Create category
   const createCategory = await prisma.category.create({
-    data: transformFields(),
+    data: {
+      ...body,
+      userId: user.id as string,
+    },
   });
   if (createCategory) {
     return NextResponse.json(
