@@ -78,7 +78,7 @@ export const BadgeColumn = ({
   options,
   ...props
 }: ColumnProps & {
-  options: { label: any; value: any; color: string }[];
+  options: any;
 }): ColumnDef<any> => {
   const defaultClassName = cn("w-[100px]", className);
   const value = rowValue || accessorKey;
@@ -87,13 +87,18 @@ export const BadgeColumn = ({
     accessorKey,
     cell: ({ row }) => {
       const findBadge = options.find(
-        (option) => option.value === row.getValue(value)
+        (option: any) => option.value === row.getValue(value)
       );
 
       return (
         <div className={defaultClassName}>
           <Badge
-            className={`rounded-full shadow-none bg-${findBadge?.color} hover:bg-${findBadge?.color}`}
+            variant="default"
+            className={cn(
+              "rounded-full shadow-none",
+              findBadge?.color &&
+                `bg-${findBadge?.color} hover:bg-${findBadge?.color}`
+            )}
           >
             {findBadge?.label}
           </Badge>
