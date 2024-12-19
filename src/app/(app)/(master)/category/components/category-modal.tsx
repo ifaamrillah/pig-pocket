@@ -1,14 +1,18 @@
 import { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 
 import { CategoryValidator, TypeCategoryValidator } from "@/lib/validator";
 import { CATEGORY_TYPE } from "@/lib/constants";
 
-import { createCategory } from "@/services/category-service";
+import {
+  createCategory,
+  getCategoryById,
+  updateCateoryById,
+} from "@/services/category-service";
 
 import {
   Credenza,
@@ -25,12 +29,19 @@ import { FormInput } from "@/components/form/form-input";
 import { FormSelect } from "@/components/form/form-select";
 
 interface CategoryModalProps {
+  id?: string;
   isOpen: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export const CategoryModal = ({ isOpen, setOpen }: CategoryModalProps) => {
+export const CategoryModal = ({ id, isOpen, setOpen }: CategoryModalProps) => {
   const queryClient = useQueryClient();
+
+  const { data, isSuccess } = useQuery({
+    queryKey: ["getCategoryById", id],
+    queryFn: () => getCategoryById(id),
+    enabled: !!id,
+  });
 
   const { mutate: mutateCreateCategory, isPending: isPendingCreateCategory } =
     useMutation({
@@ -47,23 +58,45 @@ export const CategoryModal = ({ isOpen, setOpen }: CategoryModalProps) => {
       },
     });
 
+  const { mutate: mutateUpdateCategory, isPending: isPendingUpdateCategory } =
+    useMutation({
+      mutationFn: (values: TypeCategoryValidator) =>
+        updateCateoryById(id as string, values),
+      onSuccess: () => {
+        toast.success("Edit category successfully.");
+      },
+      onError: (err: AxiosError<{ message: string }>) => {
+        toast.error(err?.response?.data?.message || "Edit category failed.");
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries({ queryKey: ["getAllCategory"] });
+        setOpen(false);
+      },
+    });
+
   const form = useForm<TypeCategoryValidator>({
     resolver: zodResolver(CategoryValidator),
     values: {
-      name: "",
-      type: "EXPENSE",
+      name: data?.data?.name || "",
+      type: data?.data?.type || "EXPENSE",
     },
   });
 
   const onSubmit = (values: TypeCategoryValidator) => {
-    mutateCreateCategory(values);
+    if (id) {
+      mutateUpdateCategory(values);
+    } else {
+      mutateCreateCategory(values);
+    }
   };
+
+  if (id && !isSuccess) return null;
 
   return (
     <Credenza open={isOpen} onOpenChange={setOpen}>
       <CredenzaContent>
         <CredenzaHeader>
-          <CredenzaTitle>Add New Category</CredenzaTitle>
+          <CredenzaTitle>{id ? "Edit" : "Add New"} Category</CredenzaTitle>
         </CredenzaHeader>
         <CredenzaBody>
           <Form {...form}>
@@ -77,7 +110,7 @@ export const CategoryModal = ({ isOpen, setOpen }: CategoryModalProps) => {
                 label="Name"
                 placeholder="Category name"
                 required
-                disabled={isPendingCreateCategory}
+                disabled={isPendingCreateCategory || isPendingUpdateCategory}
               />
               <FormSelect
                 form={form}
@@ -85,22 +118,27 @@ export const CategoryModal = ({ isOpen, setOpen }: CategoryModalProps) => {
                 label="Type"
                 options={CATEGORY_TYPE}
                 required
-                disabled={isPendingCreateCategory}
+                disabled={isPendingCreateCategory || isPendingUpdateCategory}
               />
             </form>
           </Form>
         </CredenzaBody>
         <CredenzaFooter>
           <CredenzaClose asChild>
-            <Button variant="outline" disabled={isPendingCreateCategory}>
+            <Button
+              variant="outline"
+              disabled={isPendingCreateCategory || isPendingUpdateCategory}
+            >
               Cancel
             </Button>
           </CredenzaClose>
           <Button
             onClick={form.handleSubmit(onSubmit)}
-            disabled={isPendingCreateCategory}
+            disabled={isPendingCreateCategory || isPendingUpdateCategory}
           >
-            {isPendingCreateCategory ? "Saving..." : "Save"}
+            {isPendingCreateCategory || isPendingUpdateCategory
+              ? "Saving..."
+              : "Save"}
           </Button>
         </CredenzaFooter>
       </CredenzaContent>
