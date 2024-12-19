@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+
+import { useState } from "react";
 import { FieldValues } from "react-hook-form";
+import { Trash2 } from "lucide-react";
 
 import { FormProps } from "@/lib/types";
 
@@ -18,6 +22,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 export const FormSelect = <T extends FieldValues>({
   form,
@@ -28,9 +34,13 @@ export const FormSelect = <T extends FieldValues>({
   disabled,
   description,
   options,
+  allowClear,
 }: FormProps<T> & {
   options: { value: any; label: string }[];
+  allowClear?: boolean;
 }) => {
+  const [isOpen, setOpen] = useState<boolean>(false);
+
   return (
     <FormField
       control={form.control}
@@ -39,13 +49,10 @@ export const FormSelect = <T extends FieldValues>({
         <FormItem>
           {label && <FormLabel required={required}>{label}</FormLabel>}
           <Select
-            onValueChange={(value) => {
-              const selectedOption = options.find(
-                (option) => option.value === value
-              );
-              field.onChange(selectedOption);
-            }}
-            defaultValue={field?.value?.value}
+            open={isOpen}
+            onOpenChange={setOpen}
+            onValueChange={field.onChange}
+            value={field.value}
           >
             <FormControl>
               <SelectTrigger disabled={disabled}>
@@ -53,11 +60,30 @@ export const FormSelect = <T extends FieldValues>({
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {options?.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
+              {options?.map(({ value, label }) => (
+                <SelectItem key={value} value={value}>
+                  {label}
                 </SelectItem>
               ))}
+              {allowClear && (
+                <>
+                  <Separator className="my-1" />
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => {
+                      field.onChange("");
+                      setOpen(false);
+                    }}
+                    className="w-full text-red-500 hover:text-red-500 hover:bg-red-50"
+                  >
+                    <Trash2 className="size-2" />
+                    <span className="text-[14px] font-normal">
+                      Clear option
+                    </span>
+                  </Button>
+                </>
+              )}
             </SelectContent>
           </Select>
           {description && <FormDescription>{description}</FormDescription>}
