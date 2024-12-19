@@ -6,14 +6,17 @@ import { Settings, SquarePen, Trash2 } from "lucide-react";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 
+import { VAULT_STATUS } from "@/lib/constants";
+
+import { deleteVaultById } from "@/services/vault-service";
+
 import {
   ActionColumn,
+  BadgeColumn,
   CurrencyColumn,
-  DefaultColumn,
   NameColumn,
   NoColumn,
 } from "@/components/data-table/table-column";
-import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,7 +27,6 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
 
 import { VaultModal } from "./vault-modal";
-import { deleteVaultById } from "@/services/vault-service";
 
 export const vaultColumn = [
   NoColumn({
@@ -41,20 +43,10 @@ export const vaultColumn = [
     accessorKey: "startingBalance",
     header: "Starting Balance",
   }),
-  DefaultColumn({
+  BadgeColumn({
     accessorKey: "status",
     header: "Status",
-    className: "w-[100px]",
-    cell: ({ row }) => (
-      <div className="w-[100px]">
-        <Badge
-          className="rounded-full shadow-none"
-          variant={row.getValue("status") ? "success" : "destructive"}
-        >
-          {row.getValue("status") ? "Active" : "Inactive"}
-        </Badge>
-      </div>
-    ),
+    options: VAULT_STATUS,
   }),
   ActionColumn({
     accessorKey: "actions",
