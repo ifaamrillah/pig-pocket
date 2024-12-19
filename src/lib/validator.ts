@@ -65,10 +65,7 @@ export const CategoryValidator = z.object({
   name: z.string().min(1, {
     message: "Name is required",
   }),
-  type: z.object({
-    value: z.nativeEnum(CategoryType).default(CategoryType.EXPENSE),
-    label: z.string({ message: "Category is required" }),
-  }),
+  type: z.nativeEnum(CategoryType).default(CategoryType.EXPENSE),
 });
 
 export type TypeCategoryValidator = z.infer<typeof CategoryValidator>;
