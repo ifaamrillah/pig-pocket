@@ -55,7 +55,6 @@ export const VaultValidator = z.object({
   startingBalance: z
     .number({ message: "Starting Balance must be a number" })
     .min(0, { message: "Starting Balance must not be minus" }),
-  status: z.boolean(),
   type: z.nativeEnum(VaultType).default(VaultType.TRANSACTION),
 });
 

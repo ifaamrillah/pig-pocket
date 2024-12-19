@@ -28,7 +28,6 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { FormInput } from "@/components/form/form-input";
 import { FormCurrency } from "@/components/form/form-currency";
-import { FormSwitch } from "@/components/form/form-switch";
 
 interface VaultModalProps {
   id?: string;
@@ -81,7 +80,6 @@ export const VaultModal = ({ id, isOpen, setOpen }: VaultModalProps) => {
     values: {
       name: data?.data?.name || "",
       startingBalance: +data?.data?.startingBalance || 0,
-      status: data?.data?.status ?? true,
       type: "TRANSACTION",
     },
   });
@@ -121,14 +119,6 @@ export const VaultModal = ({ id, isOpen, setOpen }: VaultModalProps) => {
                 name="startingBalance"
                 label="Starting Balance"
                 required
-                disabled={isPendingCreateVault || isPendingUpdateVault}
-              />
-              <FormSwitch
-                form={form}
-                name="status"
-                label="Status"
-                required
-                placeholder="You can make vault active or inactive."
                 disabled={isPendingCreateVault || isPendingUpdateVault}
               />
             </form>

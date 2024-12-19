@@ -6,13 +6,10 @@ import { Settings, SquarePen, Trash2 } from "lucide-react";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 
-import { VAULT_STATUS } from "@/lib/constants";
-
 import { deleteVaultById } from "@/services/vault-service";
 
 import {
   ActionColumn,
-  BadgeColumn,
   CurrencyColumn,
   NameColumn,
   NoColumn,
@@ -42,11 +39,6 @@ export const vaultColumn = [
   CurrencyColumn({
     accessorKey: "startingBalance",
     header: "Starting Balance",
-  }),
-  BadgeColumn({
-    accessorKey: "status",
-    header: "Status",
-    options: VAULT_STATUS,
   }),
   ActionColumn({
     accessorKey: "actions",

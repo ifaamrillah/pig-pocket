@@ -92,7 +92,6 @@ model Vault {
   id String @id @default(cuid())
   name String
   startingBalance Decimal
-  status Boolean @default(true)
   type VaultType @default(TRANSACTION)
 
   userId String
