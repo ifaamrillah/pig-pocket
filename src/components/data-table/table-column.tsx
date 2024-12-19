@@ -93,11 +93,11 @@ export const BadgeColumn = ({
       return (
         <div className={defaultClassName}>
           <Badge
-            variant="default"
+            variant="custom"
             className={cn(
               "rounded-full shadow-none",
               findBadge?.color &&
-                `bg-${findBadge?.color} hover:bg-${findBadge?.color}`
+                `bg-${findBadge.color}-500 hover:bg-${findBadge.color}-500 text-white border-transparent`
             )}
           >
             {findBadge?.label}
