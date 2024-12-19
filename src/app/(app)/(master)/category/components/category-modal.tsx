@@ -51,10 +51,7 @@ export const CategoryModal = ({ isOpen, setOpen }: CategoryModalProps) => {
     resolver: zodResolver(CategoryValidator),
     values: {
       name: "",
-      type: {
-        value: "EXPENSE",
-        label: "Expense",
-      },
+      type: "EXPENSE",
     },
   });
 
