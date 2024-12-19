@@ -109,3 +109,55 @@ export async function PATCH(
     { status: 500 }
   );
 }
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  // Check session
+  const user = await checkSession();
+  if (user instanceof NextResponse) return user;
+
+  // Params
+  const id = (await params).id;
+
+  // Check id is valid
+  const getCategoryById = await prisma.category.findUnique({
+    where: { id },
+    select: {
+      id: true,
+    },
+  });
+  if (!getCategoryById) {
+    return NextResponse.json(
+      {
+        message: `Category with id: "${id}" was not found.`,
+      },
+      { status: 404 }
+    );
+  }
+
+  // Delate category by id
+  const deleteCategoryById = await prisma.category.delete({
+    where: {
+      id,
+    },
+  });
+  if (deleteCategoryById) {
+    return NextResponse.json(
+      {
+        message: "Delete category successfully.",
+        data: deleteCategoryById,
+      },
+      { status: 200 }
+    );
+  }
+
+  // Internal server error
+  return NextResponse.json(
+    {
+      message: "Edit category failed.",
+    },
+    { status: 500 }
+  );
+}
