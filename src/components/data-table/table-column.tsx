@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { cn } from "@/lib/utils";
 
 import { Badge } from "@/components/ui/badge";
+import { Check, X } from "lucide-react";
 
 interface ColumnProps extends Omit<ColumnDef<any>, "cell" | "meta"> {
   accessorKey: string;
@@ -83,6 +84,11 @@ export const BadgeColumn = ({
   const defaultClassName = cn("w-[100px]", className);
   const value = rowValue || accessorKey;
 
+  const colorMap: Record<string, string> = {
+    red: "bg-red-500 hover:bg-red-500",
+    green: "bg-green-500 hover:bg-green-500",
+  };
+
   return {
     accessorKey,
     cell: ({ row }) => {
@@ -95,9 +101,8 @@ export const BadgeColumn = ({
           <Badge
             variant="custom"
             className={cn(
-              "rounded-full shadow-none",
-              findBadge?.color &&
-                `bg-${findBadge.color}-500 hover:bg-${findBadge.color}-500 text-white border-transparent`
+              "rounded-full shadow-none text-white border-transparent",
+              findBadge?.color && colorMap[findBadge.color]
             )}
           >
             {findBadge?.label}
@@ -105,6 +110,49 @@ export const BadgeColumn = ({
         </div>
       );
     },
+    meta: { className: defaultClassName },
+    ...props,
+  };
+};
+
+export const StatusColumn = ({
+  accessorKey,
+  rowValue,
+  valueChecker,
+  className,
+  ...props
+}: ColumnProps & {
+  valueChecker: {
+    active?: any;
+    inactive?: any;
+  };
+}): ColumnDef<any> => {
+  const defaultClassName = cn("w-[60px]", className);
+  const value = rowValue || accessorKey;
+
+  const { active, inactive } = valueChecker;
+
+  const valueMap = new Map([
+    [active, { Icon: Check, className: "text-green-500" }],
+    [inactive, { Icon: X, className: "text-red-500" }],
+  ]);
+
+  return {
+    accessorKey,
+    cell: ({ row }) => {
+      const cellValue = row.getValue(value);
+      const { Icon, className: iconClassName } = valueMap.get(cellValue) || {
+        Icon: null,
+        colorClass: "",
+      };
+
+      return (
+        <div className={defaultClassName}>
+          {Icon && <Icon className={cn("size-5", iconClassName)} />}
+        </div>
+      );
+    },
+
     meta: { className: defaultClassName },
     ...props,
   };
