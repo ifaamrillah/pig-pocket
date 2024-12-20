@@ -126,6 +126,7 @@ export async function DELETE(
     where: { id },
     select: {
       id: true,
+      allowDelete: true,
     },
   });
   if (!getCategoryById) {
@@ -134,6 +135,14 @@ export async function DELETE(
         message: `Category with id: "${id}" was not found.`,
       },
       { status: 404 }
+    );
+  }
+
+  // Check allow delete
+  if (!getCategoryById.allowDelete) {
+    return NextResponse.json(
+      { message: "You're not allowed to delete this category." },
+      { status: 409 }
     );
   }
 

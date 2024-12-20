@@ -123,6 +123,7 @@ export async function DELETE(
     where: { id },
     select: {
       id: true,
+      allowDelete: true,
     },
   });
   if (!getVaultById) {
@@ -131,6 +132,14 @@ export async function DELETE(
         message: `Vault with id: "${id}" was not found.`,
       },
       { status: 404 }
+    );
+  }
+
+  // Check allow delete
+  if (!getVaultById.allowDelete) {
+    return NextResponse.json(
+      { message: "You're not allowed to delete this vault." },
+      { status: 409 }
     );
   }
 
