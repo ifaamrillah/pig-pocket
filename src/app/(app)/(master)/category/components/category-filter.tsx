@@ -4,9 +4,9 @@ import { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CategoryType } from "@prisma/client";
+import { CategoryType, StatusType } from "@prisma/client";
 
-import { CATEGORY_TYPE } from "@/lib/constants";
+import { CATEGORY_TYPE, STATUS_TYPE } from "@/lib/constants";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -20,14 +20,10 @@ import { Form } from "@/components/ui/form";
 import { FormInput } from "@/components/form/form-input";
 import { FormSelect } from "@/components/form/form-select";
 
-const filterValidator = z.object({
-  name: z.string().optional(),
-  type: z.union([z.nativeEnum(CategoryType), z.literal("")]).optional(),
-});
-
 export type TypeCategoryFilter = {
   name?: string;
   type?: CategoryType;
+  status?: StatusType;
 };
 
 interface CategoryFilterProps {
@@ -36,6 +32,12 @@ interface CategoryFilterProps {
   filters: TypeCategoryFilter;
   setFilters: Dispatch<SetStateAction<TypeCategoryFilter>>;
 }
+
+const filterValidator = z.object({
+  name: z.string().optional(),
+  type: z.union([z.nativeEnum(CategoryType), z.literal("")]).optional(),
+  status: z.union([z.nativeEnum(StatusType), z.literal("")]).optional(),
+});
 
 export const CategoryFilter = ({
   isOpen,
@@ -48,6 +50,7 @@ export const CategoryFilter = ({
     values: {
       name: filters.name || "",
       type: filters.type,
+      status: filters.status,
     },
   });
 
@@ -55,6 +58,7 @@ export const CategoryFilter = ({
     setFilters({
       name: values?.name?.length ? values.name : undefined,
       type: values.type === "" ? undefined : values.type,
+      status: values.status === "" ? undefined : values.status,
     });
     setOpen(false);
   };
@@ -89,6 +93,14 @@ export const CategoryFilter = ({
                 label="Type"
                 placeholder="Select type"
                 options={CATEGORY_TYPE}
+                allowClear
+              />
+              <FormSelect
+                form={form}
+                name="status"
+                label="Status"
+                placeholder="Select status"
+                options={STATUS_TYPE}
                 allowClear
               />
             </form>

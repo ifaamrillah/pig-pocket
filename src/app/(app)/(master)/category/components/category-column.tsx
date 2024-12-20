@@ -15,6 +15,7 @@ import {
   BadgeColumn,
   NameColumn,
   NoColumn,
+  StatusColumn,
 } from "@/components/data-table/table-column";
 import {
   DropdownMenu,
@@ -32,16 +33,25 @@ export const categoryColumn = [
     accessorKey: "id",
     header: "No",
   }),
+  BadgeColumn({
+    accessorKey: "type",
+    header: "Type",
+    options: CATEGORY_TYPE,
+  }),
   NameColumn({
     accessorKey: "name",
     header: "Name",
     enableSorting: true,
     className: "w-auto",
   }),
-  BadgeColumn({
-    accessorKey: "type",
-    header: "Type",
-    options: CATEGORY_TYPE,
+
+  StatusColumn({
+    accessorKey: "status",
+    header: "Status",
+    valueChecker: {
+      active: "ACTIVE",
+      inactive: "INACTIVE",
+    },
   }),
   ActionColumn({
     accessorKey: "actions",

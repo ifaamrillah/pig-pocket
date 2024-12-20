@@ -6,7 +6,7 @@ import { AxiosError } from "axios";
 import { toast } from "sonner";
 
 import { CategoryValidator, TypeCategoryValidator } from "@/lib/validator";
-import { CATEGORY_TYPE } from "@/lib/constants";
+import { CATEGORY_TYPE, STATUS_TYPE } from "@/lib/constants";
 
 import {
   createCategory,
@@ -79,6 +79,7 @@ export const CategoryModal = ({ id, isOpen, setOpen }: CategoryModalProps) => {
     values: {
       name: data?.data?.name || "",
       type: data?.data?.type || "EXPENSE",
+      status: data?.data?.status || "ACTIVE",
     },
   });
 
@@ -117,6 +118,14 @@ export const CategoryModal = ({ id, isOpen, setOpen }: CategoryModalProps) => {
                 name="type"
                 label="Type"
                 options={CATEGORY_TYPE}
+                required
+                disabled={isPendingCreateCategory || isPendingUpdateCategory}
+              />
+              <FormSelect
+                form={form}
+                name="status"
+                label="Status"
+                options={STATUS_TYPE}
                 required
                 disabled={isPendingCreateCategory || isPendingUpdateCategory}
               />
