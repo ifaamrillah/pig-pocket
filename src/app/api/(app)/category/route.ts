@@ -15,6 +15,7 @@ export async function GET(req: NextRequest) {
   );
   const filterName = filters?.name || undefined;
   const filterType = filters?.type || undefined;
+  const filterStatus = filters?.status || undefined;
 
   // Filter
   const where = {
@@ -23,6 +24,7 @@ export async function GET(req: NextRequest) {
       name: { contains: filterName, mode: "insensitive" },
     }),
     ...(filterType && { type: filterType }),
+    ...(filterStatus && { status: filterStatus }),
   };
 
   // Get all category

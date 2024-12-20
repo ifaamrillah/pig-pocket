@@ -14,6 +14,7 @@ export async function GET(req: NextRequest) {
     req.nextUrl.searchParams
   );
   const filterName = filters?.name || undefined;
+  const filterStatus = filters?.status || undefined;
 
   // Filter
   const where = {
@@ -21,6 +22,7 @@ export async function GET(req: NextRequest) {
     ...(filterName && {
       name: { contains: filterName, mode: "insensitive" },
     }),
+    ...(filterStatus && { status: filterStatus }),
   };
 
   // Get all vault
@@ -65,7 +67,7 @@ export async function POST(req: NextRequest) {
         userId: user.id as string,
         name: body.name,
       },
-      type: "TRANSACTION",
+      type: body.type,
     },
   });
   if (existingVaultName) {
