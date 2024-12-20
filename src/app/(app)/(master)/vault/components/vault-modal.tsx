@@ -8,6 +8,7 @@ import { AxiosError } from "axios";
 import { toast } from "sonner";
 
 import { TypeVaultValidator, VaultValidator } from "@/lib/validator";
+import { STATUS_TYPE } from "@/lib/constants";
 
 import {
   createVault,
@@ -28,6 +29,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { FormInput } from "@/components/form/form-input";
 import { FormCurrency } from "@/components/form/form-currency";
+import { FormSelect } from "@/components/form/form-select";
 
 interface VaultModalProps {
   id?: string;
@@ -81,6 +83,7 @@ export const VaultModal = ({ id, isOpen, setOpen }: VaultModalProps) => {
       name: data?.data?.name || "",
       startingBalance: +data?.data?.startingBalance || 0,
       type: "TRANSACTION",
+      status: data?.data?.status || "ACTIVE",
     },
   });
 
@@ -118,6 +121,14 @@ export const VaultModal = ({ id, isOpen, setOpen }: VaultModalProps) => {
                 form={form}
                 name="startingBalance"
                 label="Starting Balance"
+                required
+                disabled={isPendingCreateVault || isPendingUpdateVault}
+              />
+              <FormSelect
+                form={form}
+                name="status"
+                label="Status"
+                options={STATUS_TYPE}
                 required
                 disabled={isPendingCreateVault || isPendingUpdateVault}
               />

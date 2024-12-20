@@ -4,6 +4,9 @@ import { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { StatusType } from "@prisma/client";
+
+import { STATUS_TYPE } from "@/lib/constants";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,9 +18,11 @@ import {
 } from "@/components/ui/sheet";
 import { Form } from "@/components/ui/form";
 import { FormInput } from "@/components/form/form-input";
+import { FormSelect } from "@/components/form/form-select";
 
 export type TypeVaultFilter = {
   name?: string;
+  status?: StatusType;
 };
 
 interface VaultFilterProps {
@@ -29,6 +34,7 @@ interface VaultFilterProps {
 
 const filterValidator = z.object({
   name: z.string().optional(),
+  status: z.union([z.nativeEnum(StatusType), z.literal("")]).optional(),
 });
 
 export const VaultFilter = ({
@@ -41,12 +47,14 @@ export const VaultFilter = ({
     resolver: zodResolver(filterValidator),
     values: {
       name: filters.name || "",
+      status: filters.status,
     },
   });
 
   const onSubmit = (values: z.infer<typeof filterValidator>) => {
     setFilters({
       name: values?.name?.length ? values.name : undefined,
+      status: values.status === "" ? undefined : values.status,
     });
     setOpen(false);
   };
@@ -73,6 +81,14 @@ export const VaultFilter = ({
                 name="name"
                 label="Name"
                 placeholder="Vault name"
+              />
+              <FormSelect
+                form={form}
+                name="status"
+                label="Status"
+                placeholder="Select status"
+                options={STATUS_TYPE}
+                allowClear
               />
             </form>
           </Form>

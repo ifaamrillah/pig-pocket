@@ -13,6 +13,7 @@ import {
   CurrencyColumn,
   NameColumn,
   NoColumn,
+  StatusColumn,
 } from "@/components/data-table/table-column";
 import {
   DropdownMenu,
@@ -39,6 +40,14 @@ export const vaultColumn = [
   CurrencyColumn({
     accessorKey: "startingBalance",
     header: "Starting Balance",
+  }),
+  StatusColumn({
+    accessorKey: "status",
+    header: "Status",
+    valueChecker: {
+      active: "ACTIVE",
+      inactive: "INACTIVE",
+    },
   }),
   ActionColumn({
     accessorKey: "actions",
