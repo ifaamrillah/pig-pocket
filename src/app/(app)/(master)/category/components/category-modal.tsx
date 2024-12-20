@@ -1,4 +1,6 @@
-import { Dispatch, SetStateAction } from "react";
+"use client";
+
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -11,7 +13,7 @@ import { CATEGORY_TYPE, STATUS_TYPE } from "@/lib/constants";
 import {
   createCategory,
   getCategoryById,
-  updateCateoryById,
+  updateCategoryById,
 } from "@/services/category-service";
 
 import {
@@ -37,6 +39,15 @@ interface CategoryModalProps {
 export const CategoryModal = ({ id, isOpen, setOpen }: CategoryModalProps) => {
   const queryClient = useQueryClient();
 
+  const form = useForm<TypeCategoryValidator>({
+    resolver: zodResolver(CategoryValidator),
+    defaultValues: {
+      name: "",
+      type: "EXPENSE",
+      status: "ACTIVE",
+    },
+  });
+
   const { data, isSuccess } = useQuery({
     queryKey: ["getCategoryById", id],
     queryFn: () => getCategoryById(id),
@@ -61,7 +72,7 @@ export const CategoryModal = ({ id, isOpen, setOpen }: CategoryModalProps) => {
   const { mutate: mutateUpdateCategory, isPending: isPendingUpdateCategory } =
     useMutation({
       mutationFn: (values: TypeCategoryValidator) =>
-        updateCateoryById(id as string, values),
+        updateCategoryById(id as string, values),
       onSuccess: () => {
         toast.success("Edit category successfully.");
       },
@@ -74,14 +85,16 @@ export const CategoryModal = ({ id, isOpen, setOpen }: CategoryModalProps) => {
       },
     });
 
-  const form = useForm<TypeCategoryValidator>({
-    resolver: zodResolver(CategoryValidator),
-    values: {
-      name: data?.data?.name || "",
-      type: data?.data?.type || "EXPENSE",
-      status: data?.data?.status || "ACTIVE",
-    },
-  });
+  useEffect(() => {
+    if (id && data?.data) {
+      form.reset({
+        name: data.data.name,
+        type: data.data.type,
+        status: data.data.status,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, data?.data]);
 
   const onSubmit = (values: TypeCategoryValidator) => {
     if (id) {

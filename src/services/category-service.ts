@@ -21,7 +21,7 @@ export async function createCategory(data: TypeCategoryValidator) {
   });
 }
 
-export async function updateCateoryById(
+export async function updateCategoryById(
   id: string,
   data: TypeCategoryValidator
 ) {

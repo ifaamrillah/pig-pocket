@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -79,13 +79,25 @@ export const VaultModal = ({ id, isOpen, setOpen }: VaultModalProps) => {
 
   const form = useForm<TypeVaultValidator>({
     resolver: zodResolver(VaultValidator),
-    values: {
-      name: data?.data?.name || "",
-      startingBalance: +data?.data?.startingBalance || 0,
+    defaultValues: {
+      name: "",
+      startingBalance: 0,
       type: "TRANSACTION",
-      status: data?.data?.status || "ACTIVE",
+      status: "ACTIVE",
     },
   });
+
+  useEffect(() => {
+    if (id && data?.data) {
+      form.reset({
+        name: data?.data?.name,
+        startingBalance: +data?.data?.startingBalance,
+        type: "TRANSACTION",
+        status: data?.data?.status,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, data?.data]);
 
   const onSubmit = (values: TypeVaultValidator) => {
     if (id) {
