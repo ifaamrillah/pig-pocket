@@ -84,6 +84,11 @@ model VerificationToken {
 
 
 // --- Start Master ---
+enum StatusType {
+  ACTIVE
+  INACTIVE
+}
+
 enum VaultType {
   TRANSACTION
 }
@@ -93,10 +98,12 @@ model Vault {
   name String
   startingBalance Decimal
   type VaultType @default(TRANSACTION)
+  status StatusType @default(ACTIVE)
 
   userId String
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  allowDelete Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -112,10 +119,12 @@ model Category {
   id String @id @default(cuid())
   name String
   type CategoryType @default(INCOME)
+  status StatusType @default(ACTIVE)
 
   userId String
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  allowDelete Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
